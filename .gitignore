@@ -1,0 +1,13 @@
+node_modules/
+.npm-cache/
+server/data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+.env
+.DS_Store
+miniprogram_npm/
+firmware/**/config.h
+.pio/
+.work/
