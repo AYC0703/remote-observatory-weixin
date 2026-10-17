@@ -1,0 +1,43 @@
+<view class="container">
+  <view class="filter-bar">
+    <view class="chip {{activeStatus === item.value ? 'active' : ''}}"
+      wx:for="{{statusOptions}}" wx:key="value" data-value="{{item.value}}" bindtap="onStatusTap">{{item.label}}</view>
+  </view>
+
+  <view class="search-bar">
+    <input class="input flex-1" placeholder="搜索编号 / 申请人 / 目标 / 设备" placeholder-class="input-placeholder"
+      value="{{search}}" bindinput="onSearchInput" confirm-type="search" bindconfirm="onSearchConfirm" />
+    <button class="btn btn-sm btn-primary" bindtap="onSearchConfirm">搜索</button>
+  </view>
+
+  <view class="row-between mt mb">
+    <text class="small muted">共 {{total}} 条</text>
+    <text class="small muted">第 {{page}} / {{totalPages}} 页</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+
+  <view wx:elif="{{!list.length}}" class="empty">
+    <view class="empty-icon">🔍</view>
+    <view>没有符合条件的申请</view>
+  </view>
+
+  <block wx:else>
+    <view class="list-item" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="item-head">
+        <text class="item-no">{{item.app_no}}</text>
+        <text class="{{item.statusClass}}">{{item.statusText}}</text>
+      </view>
+      <view class="item-line"><text class="k">申请人：</text>{{item.applicant_name}}</view>
+      <view class="item-line"><text class="k">设备：</text>{{item.device}}</view>
+      <view class="item-line"><text class="k">时段：</text>{{item.startText}} ~ {{item.endText}}</view>
+      <view class="item-line"><text class="k">目标：</text>{{item.target}}</view>
+    </view>
+  </block>
+
+  <view class="pager" wx:if="{{!loading && total > 0}}">
+    <button class="btn btn-sm btn-ghost" disabled="{{page <= 1}}" bindtap="prevPage">上一页</button>
+    <text class="pager-text">{{page}} / {{totalPages}}</text>
+    <button class="btn btn-sm btn-ghost" disabled="{{page >= totalPages}}" bindtap="nextPage">下一页</button>
+  </view>
+</view>

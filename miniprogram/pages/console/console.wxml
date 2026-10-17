@@ -1,0 +1,179 @@
+<view class="container">
+
+  <!-- 策略说明 -->
+  <view class="card" wx:if="{{policy}}">
+    <view class="card-title">远程控制策略</view>
+    <view class="card-sub">· 开盖需在本人已批准的申请时段内，可提前 {{policy.open_grace_min}} 分钟</view>
+    <view class="card-sub">· 关盖是安全方向操作，任何登录用户都可以执行，不设权限</view>
+    <view class="card-sub">· 降雨、风速超过 {{policy.wind_limit}} m/s、设备故障或离线时禁止开盖</view>
+    <view class="card-sub">· 超过 {{policy.offline_sec}} 秒无心跳判定为离线</view>
+    <view class="card-sub">· 时段结束 {{policy.close_grace_min}} 分钟后自动关盖：{{policy.auto_close ? '已开启' : '已关闭'}}</view>
+  </view>
+
+  <!-- 新生成的设备令牌 -->
+  <view class="card token-box" wx:if="{{binding}}">
+    <view class="card-title">{{binding.rebound ? '设备令牌已重置' : '设备令牌已生成'}}</view>
+    <view class="card-sub">设备：{{binding.device}}</view>
+    <view class="token-value">{{binding.token}}</view>
+    <view class="field-error">令牌仅本次显示，请立即写入 ESP32 固件；遗失只能重置。</view>
+    <view class="btn-row">
+      <button class="btn btn-sm btn-primary flex-1" bindtap="copyToken">复制令牌</button>
+      <button class="btn btn-sm btn-ghost flex-1" bindtap="dismissBinding">我已保存</button>
+    </view>
+  </view>
+
+  <!-- 管理员：接入新观测站 -->
+  <view class="card" wx:if="{{isAdmin}}">
+    <view class="card-title">接入管理</view>
+    <view class="card-sub" wx:if="{{unbound.length}}">尚未接入：{{unboundNames}}</view>
+    <view class="card-sub" wx:else>全部设备均已接入远程控制。</view>
+    <button class="btn btn-primary btn-block mt" bindtap="bindNew" disabled="{{!unbound.length}}">选择设备并生成令牌</button>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+
+  <view wx:elif="{{!covers.length}}" class="empty">
+    <view class="empty-icon">🛰️</view>
+    <view>暂无已接入远程控制的观测站</view>
+    <view class="small muted mt">{{isAdmin ? '可在上方「接入管理」中为设备生成令牌' : '请联系管理员完成接入'}}</view>
+  </view>
+
+  <block wx:else>
+    <view class="card" wx:for="{{covers}}" wx:key="id">
+
+      <!-- 标题行 -->
+      <view class="row-between">
+        <view class="flex-1">
+          <view class="item-no">{{item.device}}</view>
+          <view class="small muted mt">心跳：{{item.lastSeenText}}{{item.enabled ? '' : ' · 远程控制已停用'}}</view>
+        </view>
+        <view class="tag {{item.onlineClass}}">{{item.onlineText}}</view>
+        <view class="tag {{item.positionClass}}">{{item.positionText}}</view>
+      </view>
+
+      <view class="divider"></view>
+
+      <!-- 实时指标 -->
+      <view class="metric-grid">
+        <view class="metric">
+          <view class="metric-value">{{item.positionText}}</view>
+          <view class="metric-label">顶盖状态</view>
+        </view>
+        <view class="metric">
+          <view class="metric-value">{{item.windText}}</view>
+          <view class="metric-label">风速</view>
+        </view>
+        <view class="metric">
+          <view class="metric-value">{{item.tempText}}</view>
+          <view class="metric-label">温度</view>
+        </view>
+        <view class="metric">
+          <view class="metric-value">{{item.humidityText}}</view>
+          <view class="metric-label">湿度</view>
+        </view>
+      </view>
+
+      <!-- 细节 -->
+      <view class="kv-list mt">
+        <view class="kv-row"><text class="kv-k">降雨</text><text class="kv-v {{item.rain ? 'danger' : ''}}">{{item.rainText}}</text></view>
+        <view class="kv-row"><text class="kv-k">开限位</text><text class="kv-v">{{item.limitOpenText}}</text></view>
+        <view class="kv-row"><text class="kv-k">关限位</text><text class="kv-v">{{item.limitCloseText}}</text></view>
+        <view class="kv-row"><text class="kv-k">电机电流</text><text class="kv-v">{{item.currentText}}</text></view>
+        <view class="kv-row"><text class="kv-k">WiFi 信号</text><text class="kv-v">{{item.rssiText}}</text></view>
+        <view class="kv-row" wx:if="{{item.firmware}}"><text class="kv-k">固件版本</text><text class="kv-v">{{item.firmware}}</text></view>
+      </view>
+
+      <view class="field-error" wx:if="{{item.limitConflict}}">开、关限位同时触发，疑似限位线路故障，请现场检查。</view>
+      <view class="field-error" wx:if="{{item.fault}}">设备故障：{{item.fault}}</view>
+
+      <!-- 当前占用 -->
+      <view class="hint hint-info mt" wx:if="{{item.occupancy.length}}">
+        <view class="hint-title">当前时段占用</view>
+        <view class="hint-line" wx:for="{{item.occupancy}}" wx:for-item="occ" wx:key="app_no">
+          {{occ.applicant_name}}（{{occ.app_no}}）{{occ.startText}} → {{occ.endText}} · {{occ.target}}
+        </view>
+      </view>
+      <view class="hint hint-warn mt" wx:else>
+        <view class="hint-line">当前时段没有已批准的观测申请</view>
+      </view>
+
+      <!-- 权限说明 -->
+      <view class="hint {{item.can_open ? 'hint-ok' : 'hint-warn'}} mt">
+        <view class="hint-line">开盖：{{item.open_reason}}</view>
+        <view class="hint-line" wx:if="{{item.can_close}}">关盖：{{item.close_reason}}</view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="btn-row">
+        <button class="btn btn-sm btn-primary flex-1" data-id="{{item.id}}" data-name="{{item.device}}" data-action="open"
+          disabled="{{!item.can_open || busyId === item.id}}" bindtap="runCommand">开盖</button>
+        <button class="btn btn-sm btn-ghost flex-1" data-id="{{item.id}}" data-name="{{item.device}}" data-action="close"
+          disabled="{{!item.can_close || busyId === item.id}}" bindtap="runCommand">关盖</button>
+      </view>
+      <view class="btn-row">
+        <button class="btn btn-sm btn-ghost flex-1" data-id="{{item.id}}" data-name="{{item.device}}" data-action="stop"
+          disabled="{{!item.online || busyId === item.id}}" bindtap="runCommand">停止</button>
+        <button class="btn btn-sm btn-danger flex-1" data-id="{{item.id}}" data-name="{{item.device}}"
+          disabled="{{busyId === item.id}}" bindtap="emergencyClose">紧急关盖</button>
+      </view>
+      <view class="btn-row">
+        <button class="btn btn-sm btn-ghost flex-1" data-id="{{item.id}}" bindtap="toggleDetail">
+          {{expandedId === item.id ? '收起运行记录' : '查看运行记录'}}
+        </button>
+      </view>
+
+      <view class="btn-row" wx:if="{{isAdmin}}">
+        <button class="btn btn-sm btn-ghost flex-1" data-id="{{item.id}}" data-name="{{item.device}}"
+          bindtap="resetToken">重置令牌</button>
+        <button class="btn btn-sm btn-ghost flex-1" data-id="{{item.id}}" data-name="{{item.device}}"
+          data-enabled="{{item.enabled}}" bindtap="toggleEnabled">{{item.enabled ? '停用' : '启用'}}</button>
+        <button class="btn btn-sm btn-danger flex-1" data-id="{{item.id}}" data-name="{{item.device}}"
+          bindtap="unbind">解除接入</button>
+      </view>
+
+      <view class="btn-row" wx:if="{{isAdmin && !item.can_open}}">
+        <button class="btn btn-sm btn-ghost flex-1" data-id="{{item.id}}" data-name="{{item.device}}" data-action="open"
+          bindtap="forceCommand">管理员强制开盖（绕过限制）</button>
+      </view>
+
+      <!-- 运行记录 -->
+      <block wx:if="{{expandedId === item.id}}">
+        <view class="divider"></view>
+        <view wx:if="{{detailLoading}}" class="loading">加载中…</view>
+        <block wx:elif="{{detail}}">
+          <view class="log-title">指令流水（最近 30 条）</view>
+          <view wx:if="{{!detail.commands.length}}" class="small muted">暂无指令记录</view>
+          <view class="log-item" wx:for="{{detail.commands}}" wx:for-item="cmd" wx:key="req_id">
+            <view class="row-between">
+              <text class="log-main">{{cmd.actionText}}</text>
+              <text class="tag {{cmd.statusClass}}">{{cmd.statusText}}</text>
+            </view>
+            <view class="log-meta">{{cmd.createdText}} · 来源 {{cmd.source}} · {{cmd.username || '系统'}}</view>
+            <view class="log-meta" wx:if="{{cmd.detail}}">{{cmd.detail}}</view>
+          </view>
+
+          <view class="log-title mt">设备事件（最近 30 条）</view>
+          <view wx:if="{{!detail.events.length}}" class="small muted">暂无事件记录</view>
+          <view class="log-item" wx:for="{{detail.events}}" wx:for-item="ev" wx:key="id">
+            <view class="row-between">
+              <text class="log-main">{{ev.code}}</text>
+              <text class="tag {{ev.levelClass}}">{{ev.levelText}}</text>
+            </view>
+            <view class="log-meta">{{ev.createdText}}</view>
+            <view class="log-meta" wx:if="{{ev.message}}">{{ev.message}}</view>
+          </view>
+        </block>
+      </block>
+
+    </view>
+  </block>
+
+  <view class="card mt">
+    <view class="card-title">安全须知</view>
+    <view class="card-sub">· 顶盖运动时请勿靠近或伸手，现场应有声光警示。</view>
+    <view class="card-sub">· 通信失联时系统不会自动关盖（避免中断正在进行的曝光），但会告警。</view>
+    <view class="card-sub">· 降雨会触发设备本地硬逻辑立即关盖，不依赖网络。</view>
+    <view class="card-sub">· 紧急关盖会取消队列中的全部指令，请勿滥用。</view>
+  </view>
+
+</view>

@@ -1,0 +1,30 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+
+  <view wx:elif="{{!list.length}}" class="empty">
+    <view class="empty-icon">📭</view>
+    <view>暂无申请记录</view>
+    <view class="small muted mt">前往「提交申请」创建你的第一条观测申请</view>
+    <button class="btn btn-primary mt" style="width: 320rpx;" bindtap="goSubmit">去提交</button>
+  </view>
+
+  <block wx:else>
+    <view class="list-item" wx:for="{{list}}" wx:key="id">
+      <view class="item-head">
+        <text class="item-no">{{item.app_no}}</text>
+        <text class="{{item.statusClass}}">{{item.statusText}}</text>
+      </view>
+      <view class="item-line"><text class="k">设备：</text>{{item.device}}</view>
+      <view class="item-line"><text class="k">时段：</text>{{item.startText}} ~ {{item.endText}}</view>
+      <view class="item-line"><text class="k">目标：</text>{{item.target}}</view>
+      <view class="item-line"><text class="k">提交：</text>{{item.createdText}}</view>
+      <view wx:if="{{item.review_comment}}" class="item-line"><text class="k">审批意见：</text>{{item.review_comment}}</view>
+
+      <view class="btn-row">
+        <button class="btn btn-sm btn-ghost flex-1" data-id="{{item.id}}" bindtap="goDetail">查看详情</button>
+        <button wx:if="{{item.status === 'pending'}}" class="btn btn-sm btn-danger flex-1"
+          data-id="{{item.id}}" bindtap="withdraw">撤回申请</button>
+      </view>
+    </view>
+  </block>
+</view>

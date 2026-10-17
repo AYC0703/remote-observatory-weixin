@@ -1,0 +1,32 @@
+<view class="container">
+  <view class="card" wx:if="{{!loading}}">
+    <view class="card-title">设备时段占用</view>
+    <view class="card-sub">仅展示「待审批」与「已通过」的占用时段，按开始时间排序</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+
+  <view wx:elif="{{!groups.length}}" class="empty">
+    <view class="empty-icon">📅</view>
+    <view>暂无占用时段</view>
+  </view>
+
+  <block wx:else>
+    <view class="card" wx:for="{{groups}}" wx:key="device">
+      <view class="row-between mb">
+        <text class="card-title" style="margin-bottom: 0;">{{item.device}}</text>
+        <text class="small muted">{{item.slots.length}} 个时段</text>
+      </view>
+      <view class="cal-slot {{slot.status}}" wx:for="{{item.slots}}" wx:for-item="slot" wx:key="id">
+        <view>
+          <view class="cal-time">{{slot.startText}}</view>
+          <view class="cal-time">→ {{slot.endText}}</view>
+        </view>
+        <view class="cal-right">
+          <text class="tag tag-{{slot.status}}">{{slot.status === 'approved' ? '已通过' : '待审批'}}</text>
+          <view class="small muted mt">{{slot.app_no}}</view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

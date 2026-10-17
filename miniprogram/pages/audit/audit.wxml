@@ -1,0 +1,24 @@
+<view class="container">
+  <view class="card" wx:if="{{!loading}}">
+    <view class="card-title">操作流水</view>
+    <view class="card-sub">最近 {{list.length}} 条（上限 200 条），按时间倒序</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+
+  <view wx:elif="{{!list.length}}" class="empty">
+    <view class="empty-icon">📜</view>
+    <view>暂无审计记录</view>
+  </view>
+
+  <block wx:else>
+    <view class="list-item audit-item" wx:for="{{list}}" wx:key="id">
+      <view class="row-between">
+        <text class="tag tag-default">{{item.actionText}}</text>
+        <text class="small muted">{{item.timeText}}</text>
+      </view>
+      <view class="item-line mt">{{item.detail || '—'}}</view>
+      <view class="small muted">操作人：{{item.username || '系统'}}</view>
+    </view>
+  </block>
+</view>

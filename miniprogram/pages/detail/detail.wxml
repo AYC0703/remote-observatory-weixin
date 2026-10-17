@@ -1,0 +1,43 @@
+<view class="container" wx:if="{{app}}">
+  <view class="card">
+    <view class="row-between">
+      <text class="item-no">{{app.app_no}}</text>
+      <text class="{{app.statusClass}}">{{app.statusText}}</text>
+    </view>
+    <view class="divider"></view>
+    <view class="info-line"><text class="k">观测设备</text><text>{{app.device}}</text></view>
+    <view class="info-line"><text class="k">开始时间</text><text>{{app.startText}}</text></view>
+    <view class="info-line"><text class="k">结束时间</text><text>{{app.endText}}</text></view>
+    <view class="info-line"><text class="k">拍摄目标</text><text class="right-text">{{app.target}}</text></view>
+    <view class="info-line"><text class="k">拍摄目的</text><text class="right-text">{{app.purpose}}</text></view>
+    <view class="info-line"><text class="k">申请人</text><text>{{app.applicant_name}}（{{app.applicant_username}}）</text></view>
+    <view class="info-line"><text class="k">联系方式</text><text>{{app.applicant_contact}}</text></view>
+    <view class="info-line"><text class="k">提交时间</text><text>{{app.createdText}}</text></view>
+    <view class="info-line" wx:if="{{app.reviewed_at}}"><text class="k">审批时间</text><text>{{app.reviewedText}}</text></view>
+    <view class="info-line" wx:if="{{app.reviewer_name}}"><text class="k">审批人</text><text>{{app.reviewer_name}}</text></view>
+    <view class="info-line" wx:if="{{app.review_comment}}"><text class="k">审批意见</text><text class="right-text">{{app.review_comment}}</text></view>
+  </view>
+
+  <view class="card" wx:if="{{isAdmin && app.status === 'pending'}}">
+    <view class="card-title">审批操作</view>
+    <view class="btn-row">
+      <button class="btn btn-danger flex-1" data-action="reject" bindtap="goReview">不同意</button>
+      <button class="btn btn-primary flex-1" data-action="approve" bindtap="goReview">同意</button>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">状态变更历史</view>
+    <view class="timeline" wx:if="{{history.length}}">
+      <view class="timeline-item" wx:for="{{history}}" wx:key="id">
+        <view class="timeline-dot" style="background: {{item.statusColor}};"></view>
+        <view class="timeline-title">{{item.actionText}} → {{item.toStatusText}}</view>
+        <view class="timeline-meta">{{item.timeText}} · {{item.operator_name || '系统'}}</view>
+        <view wx:if="{{item.comment}}" class="timeline-comment">{{item.comment}}</view>
+      </view>
+    </view>
+    <view wx:else class="small muted">暂无历史记录</view>
+  </view>
+</view>
+
+<view wx:else class="loading">加载中…</view>

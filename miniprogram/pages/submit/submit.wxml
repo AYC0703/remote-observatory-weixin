@@ -1,0 +1,91 @@
+<view class="container">
+  <view class="card">
+    <view class="card-title">设备与使用时段</view>
+
+    <view class="form-item">
+      <text class="form-label">观测设备<text class="req">*</text></text>
+      <picker mode="selector" range="{{deviceNames}}" value="{{deviceIndex}}" bindchange="onDeviceChange">
+        <view class="picker-box">
+          <text class="{{deviceIndex >= 0 ? '' : 'placeholder'}}">{{deviceIndex >= 0 ? deviceNames[deviceIndex] : '请选择观测设备'}}</text>
+          <text class="muted">▾</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">开始时间<text class="req">*</text></text>
+      <view class="row">
+        <picker class="flex-1" mode="date" value="{{startDate}}" start="{{minDate}}" bindchange="onStartDate">
+          <view class="picker-box"><text>{{startDate || '选择日期'}}</text><text class="muted">▾</text></view>
+        </picker>
+        <picker class="flex-1" mode="time" value="{{startTime}}" bindchange="onStartTime">
+          <view class="picker-box"><text>{{startTime || '选择时间'}}</text><text class="muted">▾</text></view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">结束时间<text class="req">*</text></text>
+      <view class="row">
+        <picker class="flex-1" mode="date" value="{{endDate}}" start="{{minDate}}" bindchange="onEndDate">
+          <view class="picker-box"><text>{{endDate || '选择日期'}}</text><text class="muted">▾</text></view>
+        </picker>
+        <picker class="flex-1" mode="time" value="{{endTime}}" bindchange="onEndTime">
+          <view class="picker-box"><text>{{endTime || '选择时间'}}</text><text class="muted">▾</text></view>
+        </picker>
+      </view>
+      <view class="small muted mt">支持跨日夜间时段，例如 22:00 至次日 02:00；首尾相接不算冲突。</view>
+    </view>
+
+    <view wx:if="{{checking}}" class="small muted">正在检测时段冲突…</view>
+  </view>
+
+  <view class="card conflict-card" wx:if="{{conflicts.length}}">
+    <view class="card-title">⚠️ 时段冲突</view>
+    <view class="card-sub">以下申请已占用该设备时段，请调整时段后再提交：</view>
+    <view class="conflict-item" wx:for="{{conflicts}}" wx:key="id">
+      <view class="row-between">
+        <text class="strong">{{item.app_no}}</text>
+        <text class="tag tag-{{item.status}}">{{item.status === 'approved' ? '已通过' : '待审批'}}</text>
+      </view>
+      <view class="small muted mt">{{item.start_time}} ~ {{item.end_time}}</view>
+    </view>
+  </view>
+
+  <view class="card" wx:else>
+    <view class="card-title" wx:if="{{conflictLoaded && !conflicts.length}}">✅ 该时段空闲</view>
+    <view class="card-title" wx:else>申请信息</view>
+  </view>
+
+  <view class="card">
+    <view class="form-item">
+      <text class="form-label">拍摄目标<text class="req">*</text></text>
+      <input class="input" placeholder="如：M31 仙女座星系" placeholder-class="input-placeholder"
+        value="{{target}}" data-field="target" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">拍摄目的<text class="req">*</text></text>
+      <textarea class="textarea" placeholder="如：深空天体拍摄 / 光谱观测 / 教学实习"
+        placeholder-class="input-placeholder" value="{{purpose}}" data-field="purpose" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">申请人姓名<text class="req">*</text></text>
+      <input class="input" placeholder="请输入申请人姓名" placeholder-class="input-placeholder"
+        value="{{applicantName}}" data-field="applicantName" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">联系方式<text class="req">*</text></text>
+      <input class="input" placeholder="手机号或邮箱" placeholder-class="input-placeholder"
+        value="{{applicantContact}}" data-field="applicantContact" bindinput="onInput" />
+    </view>
+  </view>
+
+  <view wx:if="{{formError}}" class="field-error mb">{{formError}}</view>
+
+  <button class="btn btn-primary btn-block" loading="{{submitting}}" disabled="{{submitting || conflicts.length > 0}}"
+    bindtap="onSubmit">提交申请</button>
+
+  <view class="center mt">
+    <text class="link" bindtap="goMine">查看我的申请 ›</text>
+  </view>
+</view>

@@ -1,0 +1,7 @@
+.mini-chart {
+  width: 100%;
+}
+.mini-chart-canvas {
+  width: 100%;
+  height: 100%;
+}

@@ -1,0 +1,57 @@
+<view class="container">
+  <view class="hero">
+    <view class="row">
+      <view class="avatar">{{initial}}</view>
+      <view class="flex-1">
+        <view class="hero-title">{{user.name || user.username}}</view>
+        <view class="hero-sub">{{user.username}} · {{isAdmin ? '管理员' : '普通用户'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card" bindtap="openChangePwd">
+    <view class="row-between">
+      <view class="flex-1">
+        <view class="card-title">修改密码</view>
+        <view class="card-sub">{{isAdmin ? '管理员密码由环境变量 ADMIN_PASSWORD 管理' : '需校验当前密码，新密码至少 6 位'}}</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">账号信息</view>
+    <view class="info-line"><text class="k">用户名</text><text>{{user.username}}</text></view>
+    <view class="info-line"><text class="k">显示名称</text><text>{{user.name}}</text></view>
+    <view class="info-line"><text class="k">角色</text><text>{{isAdmin ? '管理员' : '普通用户'}}</text></view>
+  </view>
+
+  <button class="btn btn-danger btn-block" bindtap="onLogout">退出登录</button>
+  <view class="center small muted mt">远程天文台使用申请审批及统计系统 v{{version}}</view>
+</view>
+
+<view class="modal-mask" wx:if="{{showPwd}}">
+  <view class="modal-box">
+    <view class="card-title">修改密码</view>
+    <view class="form-item">
+      <text class="form-label">当前密码</text>
+      <input class="input" password placeholder="请输入当前密码" placeholder-class="input-placeholder"
+        value="{{pwd.old}}" data-field="old" bindinput="onPwdInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">新密码</text>
+      <input class="input" password placeholder="至少 6 位" placeholder-class="input-placeholder"
+        value="{{pwd.new}}" data-field="new" bindinput="onPwdInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">确认新密码</text>
+      <input class="input" password placeholder="请再次输入新密码" placeholder-class="input-placeholder"
+        value="{{pwd.confirm}}" data-field="confirm" bindinput="onPwdInput" />
+    </view>
+    <view wx:if="{{pwdError}}" class="field-error">{{pwdError}}</view>
+    <view class="btn-row">
+      <button class="btn btn-ghost flex-1" bindtap="closePwd">取消</button>
+      <button class="btn btn-primary flex-1" loading="{{pwdLoading}}" disabled="{{pwdLoading}}" bindtap="submitPwd">确定</button>
+    </view>
+  </view>
+</view>

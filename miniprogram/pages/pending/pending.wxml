@@ -1,0 +1,38 @@
+<view class="container">
+  <view class="card" wx:if="{{!loading}}">
+    <view class="row-between">
+      <view>
+        <view class="card-title">待审批队列</view>
+        <view class="card-sub">共 {{list.length}} 条 · 按提交时间升序（先到先审）</view>
+      </view>
+      <view class="tag tag-pending">待处理</view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+
+  <view wx:elif="{{!list.length}}" class="empty">
+    <view class="empty-icon">✅</view>
+    <view>暂无待审批申请</view>
+    <view class="small muted mt">所有申请都处理完啦</view>
+  </view>
+
+  <block wx:else>
+    <view class="list-item" wx:for="{{list}}" wx:key="id">
+      <view class="item-head">
+        <text class="item-no">{{item.app_no}}</text>
+        <text class="{{item.statusClass}}">{{item.statusText}}</text>
+      </view>
+      <view class="item-line"><text class="k">申请人：</text>{{item.applicant_name}}（{{item.applicant_username}}）</view>
+      <view class="item-line"><text class="k">设备：</text>{{item.device}}</view>
+      <view class="item-line"><text class="k">时段：</text>{{item.startText}} ~ {{item.endText}}</view>
+      <view class="item-line"><text class="k">目标：</text>{{item.target}}</view>
+      <view class="item-line"><text class="k">提交：</text>{{item.createdText}}</view>
+      <view class="btn-row">
+        <button class="btn btn-sm btn-ghost flex-1" data-id="{{item.id}}" bindtap="goDetail">详情</button>
+        <button class="btn btn-sm btn-danger flex-1" data-id="{{item.id}}" data-action="reject" bindtap="goReview">不同意</button>
+        <button class="btn btn-sm btn-primary flex-1" data-id="{{item.id}}" data-action="approve" bindtap="goReview">同意</button>
+      </view>
+    </view>
+  </block>
+</view>

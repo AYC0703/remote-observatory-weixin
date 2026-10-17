@@ -1,0 +1,31 @@
+<view class="container">
+  <view class="hero">
+    <view class="hero-title">你好，{{user.name || user.username}}</view>
+    <view class="hero-sub">{{isAdmin ? '管理员 · 可审批申请并查看统计' : '普通用户 · 提交并跟踪观测申请'}}</view>
+  </view>
+
+  <view class="card" wx:if="{{isAdmin}}">
+    <view class="row-between">
+      <view>
+        <view class="card-title">待办提醒</view>
+        <view class="card-sub">进入「待审批」查看需要处理的申请</view>
+      </view>
+      <view class="tag tag-pending">先到先审</view>
+    </view>
+  </view>
+
+  <view class="menu-grid">
+    <view class="menu-item" wx:for="{{menus}}" wx:key="url" data-url="{{item.url}}" bindtap="goMenu">
+      <view class="menu-icon">{{item.icon}}</view>
+      <view class="menu-name">{{item.name}}</view>
+      <view class="menu-desc">{{item.desc}}</view>
+    </view>
+  </view>
+
+  <view class="card mt">
+    <view class="card-title">使用提示</view>
+    <view class="card-sub">· 选择设备与时段后会自动检测冲突，冲突时无法提交。</view>
+    <view class="card-sub">· 仅「待审批」的申请可由本人撤回。</view>
+    <view class="card-sub">· 审批结果需回到「我的申请」查看。</view>
+  </view>
+</view>

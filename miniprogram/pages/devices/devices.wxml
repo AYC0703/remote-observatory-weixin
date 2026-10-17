@@ -1,0 +1,39 @@
+<view class="container">
+  <view class="card">
+    <view class="card-title">新增设备</view>
+    <view class="row">
+      <input class="input flex-1" placeholder="请输入设备名称（最多 50 字）" placeholder-class="input-placeholder"
+        value="{{newName}}" bindinput="onNewNameInput" confirm-type="done" bindconfirm="addDevice" />
+      <button class="btn btn-sm btn-primary" loading="{{adding}}" disabled="{{adding}}" bindtap="addDevice">新增</button>
+    </view>
+    <view wx:if="{{error}}" class="field-error">{{error}}</view>
+  </view>
+
+  <view class="card" wx:if="{{!loading}}">
+    <view class="card-title">设备列表（{{list.length}}）</view>
+    <view class="card-sub">重命名会同步更新历史申请中的设备名；已被申请引用的设备不可删除。</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+
+  <view wx:elif="{{!list.length}}" class="empty">
+    <view class="empty-icon">🛠️</view>
+    <view>暂无设备，请先新增</view>
+  </view>
+
+  <block wx:else>
+    <view class="list-item" wx:for="{{list}}" wx:key="id">
+      <view class="row-between">
+        <view class="flex-1">
+          <view class="item-no">{{item.name}}</view>
+          <view class="small muted mt">被 {{item.count}} 条申请引用</view>
+        </view>
+        <view class="{{item.count > 0 ? 'tag tag-pending' : 'tag tag-approved'}}">{{item.count > 0 ? '使用中' : '可删除'}}</view>
+      </view>
+      <view class="btn-row">
+        <button class="btn btn-sm btn-ghost flex-1" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="renameDevice">重命名</button>
+        <button class="btn btn-sm btn-danger flex-1" data-id="{{item.id}}" data-name="{{item.name}}" data-count="{{item.count}}" bindtap="deleteDevice">删除</button>
+      </view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,50 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+
+  <block wx:else>
+    <view class="metric-grid">
+      <view class="metric">
+        <view class="metric-value" style="color: #e8eefc;">{{stats.total}}</view>
+        <view class="metric-label">申请总数</view>
+      </view>
+      <view class="metric">
+        <view class="metric-value" style="color: #7bf0ac;">{{stats.approveRate}}%</view>
+        <view class="metric-label">通过率</view>
+      </view>
+      <view class="metric">
+        <view class="metric-value" style="color: #ffcf70;">{{stats.counts.pending}}</view>
+        <view class="metric-label">待审批</view>
+      </view>
+      <view class="metric">
+        <view class="metric-value" style="color: #7bf0ac;">{{stats.counts.approved}}</view>
+        <view class="metric-label">已通过</view>
+      </view>
+      <view class="metric">
+        <view class="metric-value" style="color: #ff9a9a;">{{stats.counts.rejected}}</view>
+        <view class="metric-label">未通过</view>
+      </view>
+      <view class="metric">
+        <view class="metric-value" style="color: #b6c2d6;">{{stats.counts.withdrawn}}</view>
+        <view class="metric-label">已撤回</view>
+      </view>
+    </view>
+
+    <view class="card mt">
+      <view class="card-title">状态分布</view>
+      <mini-chart type="doughnut" chartData="{{statusChart}}" height="{{230}}" />
+    </view>
+
+    <view class="card">
+      <view class="card-title">各设备申请量</view>
+      <mini-chart type="bar" chartData="{{deviceChart}}" height="{{230}}" />
+    </view>
+
+    <view class="card">
+      <view class="card-title">月度申请趋势</view>
+      <mini-chart type="line" chartData="{{monthChart}}" height="{{230}}" />
+    </view>
+
+    <button class="btn btn-primary btn-block" bindtap="onExport">导出 CSV 报表</button>
+    <view class="center small muted mt">报表含全部申请字段与审批信息，导出后可转发保存</view>
+  </block>
+</view>

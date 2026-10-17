@@ -1,0 +1,13 @@
+.conflict-card { border-color: #a03a46; }
+.conflict-item {
+  background: #0e1b34;
+  border-radius: 12rpx;
+  padding: 18rpx 20rpx;
+  margin-top: 14rpx;
+}
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+}

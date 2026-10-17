@@ -1,0 +1,3 @@
+<view class="mini-chart" style="height: {{height}}px;">
+  <canvas type="2d" id="chart" class="mini-chart-canvas"></canvas>
+</view>

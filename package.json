@@ -1,0 +1,16 @@
+{
+  "name": "remote-observatory-weixin",
+  "version": "1.1.0",
+  "private": true,
+  "description": "远程天文台使用申请审批及统计系统 —— 微信小程序版（小程序 + Node/SQLite 后端 + ESP32 顶盖控制）",
+  "scripts": {
+    "server": "node server/server.js",
+    "test:server": "node server/test/e2e.mjs",
+    "validate": "node scripts/validate-miniprogram.mjs",
+    "check": "node scripts/validate-miniprogram.mjs && node server/test/e2e.mjs",
+    "install:server": "cd server && npm install --cache ./.npm-cache"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}

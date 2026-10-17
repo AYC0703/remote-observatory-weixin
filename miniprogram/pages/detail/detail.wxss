@@ -1,0 +1,15 @@
+.right-text {
+  max-width: 62%;
+  text-align: right;
+  word-break: break-all;
+}
+.info-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #1e3357;
+  font-size: 27rpx;
+}
+.info-line:last-child { border-bottom: none; }
+.info-line .k { color: #8199c0; flex: 0 0 auto; margin-right: 20rpx; }

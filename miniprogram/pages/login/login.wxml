@@ -1,0 +1,25 @@
+<view class="auth-page">
+  <view class="auth-brand">
+    <view class="auth-logo">🔭</view>
+    <view class="auth-title">远程天文台</view>
+    <view class="auth-sub">使用申请审批及统计系统</view>
+  </view>
+
+  <view class="card">
+    <view class="form-item">
+      <text class="form-label">用户名</text>
+      <input class="input" placeholder="请输入用户名" placeholder-class="input-placeholder"
+        value="{{username}}" data-field="username" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">密码</text>
+      <input class="input" password placeholder="请输入密码" placeholder-class="input-placeholder"
+        value="{{password}}" data-field="password" bindinput="onInput" confirm-type="done" bindconfirm="onLogin" />
+    </view>
+    <view wx:if="{{error}}" class="field-error">{{error}}</view>
+    <button class="btn btn-primary btn-block" loading="{{loading}}" disabled="{{loading}}" bindtap="onLogin">登 录</button>
+    <view class="auth-switch">还没有账号？<text class="link" bindtap="goRegister">立即注册</text></view>
+  </view>
+
+  <view class="center small muted">管理员账号由系统预设，普通用户可自助注册</view>
+</view>

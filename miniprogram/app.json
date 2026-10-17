@@ -1,0 +1,38 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/login/login",
+    "pages/register/register",
+    "pages/submit/submit",
+    "pages/mine/mine",
+    "pages/detail/detail",
+    "pages/pending/pending",
+    "pages/review/review",
+    "pages/all/all",
+    "pages/calendar/calendar",
+    "pages/stats/stats",
+    "pages/audit/audit",
+    "pages/devices/devices",
+    "pages/console/console",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#0d1b33",
+    "navigationBarTitleText": "远程天文台",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#0a1426"
+  },
+  "tabBar": {
+    "color": "#8fa3c8",
+    "selectedColor": "#4da3ff",
+    "backgroundColor": "#0d1b33",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/home/home", "text": "首页" },
+      { "pagePath": "pages/profile/profile", "text": "我的" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

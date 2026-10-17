@@ -1,0 +1,58 @@
+<view class="container" wx:if="{{app}}">
+  <view class="card">
+    <view class="item-head">
+      <text class="item-no">{{app.app_no}}</text>
+      <text class="{{app.statusClass}}">{{app.statusText}}</text>
+    </view>
+    <view class="divider"></view>
+    <view class="item-line"><text class="k">申请人：</text>{{app.applicant_name}}（{{app.applicant_username}}）</view>
+    <view class="item-line"><text class="k">设备：</text>{{app.device}}</view>
+    <view class="item-line"><text class="k">时段：</text>{{app.startText}} ~ {{app.endText}}</view>
+    <view class="item-line"><text class="k">目标：</text>{{app.target}}</view>
+    <view class="item-line"><text class="k">目的：</text>{{app.purpose}}</view>
+    <view class="item-line"><text class="k">联系方式：</text>{{app.applicant_contact}}</view>
+  </view>
+
+  <view class="card conflict-card" wx:if="{{isApprove && conflicts.length}}">
+    <view class="card-title">⚠️ 检测到时段冲突</view>
+    <view class="card-sub">该申请与以下已占用时段重叠，如需通过请开启「强制通过」。</view>
+    <view class="conflict-item" wx:for="{{conflicts}}" wx:key="id">
+      <view class="row-between">
+        <text class="strong">{{item.app_no}}</text>
+        <text class="tag tag-{{item.status}}">{{item.status === 'approved' ? '已通过' : '待审批'}}</text>
+      </view>
+      <view class="small muted mt">{{item.start_time}} ~ {{item.end_time}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="switch-row" wx:if="{{isApprove}}">
+      <view class="flex-1">
+        <view class="card-title">强制通过</view>
+        <view class="card-sub">存在冲突时仍需通过时开启</view>
+      </view>
+      <switch checked="{{force}}" color="#2f7fe0" bindchange="onForceChange" />
+    </view>
+
+    <view class="form-item" wx:if="{{isApprove}}">
+      <text class="form-label">审批意见（可选）</text>
+      <textarea class="textarea" placeholder="如：时段空闲，同意" placeholder-class="input-placeholder"
+        value="{{comment}}" bindinput="onCommentInput" />
+    </view>
+    <view class="form-item" wx:else>
+      <text class="form-label">审批意见（不同意时必填）<text class="req">*</text></text>
+      <textarea class="textarea" placeholder="请说明不同意的原因" placeholder-class="input-placeholder"
+        value="{{comment}}" bindinput="onCommentInput" />
+    </view>
+
+    <view wx:if="{{formError}}" class="field-error">{{formError}}</view>
+  </view>
+
+  <view class="btn-row">
+    <button class="btn btn-ghost flex-1" bindtap="onCancel">取消</button>
+    <button class="btn {{isApprove ? 'btn-primary' : 'btn-danger'}} flex-1"
+      loading="{{submitting}}" disabled="{{submitting}}" bindtap="onSubmit">{{isApprove ? '确认通过' : '确认拒绝'}}</button>
+  </view>
+</view>
+
+<view wx:else class="loading">加载中…</view>

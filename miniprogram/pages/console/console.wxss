@@ -1,0 +1,53 @@
+/* ==================== 观测站控制台 ==================== */
+
+/* 设备令牌展示 */
+.token-box { border-color: #2f7fe0; background: #102647; }
+.token-value {
+  margin: 18rpx 0 8rpx;
+  padding: 20rpx;
+  background: #0a1426;
+  border: 1rpx solid #24406e;
+  border-radius: 12rpx;
+  font-family: Consolas, Menlo, monospace;
+  font-size: 24rpx;
+  color: #9fd2ff;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+/* 键值明细 */
+.kv-list { border-top: 1rpx solid #1e3357; padding-top: 12rpx; }
+.kv-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10rpx 0;
+  font-size: 25rpx;
+}
+.kv-k { color: #8199c0; }
+.kv-v { color: #cfe0ff; }
+.kv-v.danger { color: #ff8080; font-weight: 600; }
+
+/* 提示条 */
+.hint {
+  border-radius: 14rpx;
+  padding: 18rpx 20rpx;
+  border-left: 6rpx solid #4da3ff;
+  background: rgba(77, 163, 255, 0.08);
+}
+.hint-ok { border-left-color: #2ecc71; background: rgba(46, 204, 113, 0.08); }
+.hint-warn { border-left-color: #f5a623; background: rgba(245, 166, 35, 0.08); }
+.hint-info { border-left-color: #4da3ff; }
+.hint-title { font-size: 25rpx; font-weight: 600; color: #cfe0ff; margin-bottom: 6rpx; }
+.hint-line { font-size: 24rpx; color: #b7c8e6; line-height: 1.6; }
+
+/* 运行记录 */
+.log-title { font-size: 26rpx; font-weight: 600; color: #cfe0ff; margin-bottom: 14rpx; }
+.log-item {
+  background: #0e1b34;
+  border-radius: 12rpx;
+  padding: 18rpx 20rpx;
+  margin-bottom: 14rpx;
+}
+.log-main { font-size: 26rpx; font-weight: 600; color: #cfe0ff; }
+.log-meta { font-size: 23rpx; color: #8199c0; margin-top: 6rpx; line-height: 1.5; }
